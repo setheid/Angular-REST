@@ -38,7 +38,6 @@ app.controller('apiCtrl', ['$scope','$http', function($scope, $http) {
     .then((res) => {
       $scope.players.push(res.data.player);
       resetAddPlayer();
-      // this.getPlayers();
       console.log(res.data.message);
     }, (err) => console.log(err));
   }
