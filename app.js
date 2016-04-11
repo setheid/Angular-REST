@@ -27,16 +27,18 @@ app.controller('apiCtrl', ['$scope','$http', function($scope, $http) {
   }
 
   this.addPlayer = function() {
-    $http.post(`${mainRoute}/players`, {
-      'name':$scope.newPlayer.name,
-      'alias':$scope.newPlayer.alias,
-      'position':$scope.newPlayer.position,
-      'country':$scope.newPlayer.country,
-      'current_team': $scope.newPlayer.current_team.replace(/\s+/g,'_')
-    })
+    var postNewPlayer = {};
+    for (var key in $scope.newPlayer) {
+      if ($scope.newPlayer[key]) {
+        postNewPlayer[key] = $scope.newPlayer[key];
+      }
+    }
+    if (postNewPlayer.current_team) postNewPlayer.current_team = postNewPlayer.current_team.replace(/\s+/g,'_');
+    $http.post(`${mainRoute}/players`, postNewPlayer)
     .then((res) => {
+      $scope.players.push(res.data.player);
       resetAddPlayer();
-      this.getPlayers();
+      // this.getPlayers();
       console.log(res.data.message);
     }, (err) => console.log(err));
   }
@@ -56,15 +58,14 @@ app.controller('apiCtrl', ['$scope','$http', function($scope, $http) {
   $scope.edit = (player) => player.makeEdit === false ? player.makeEdit = true : player.makeEdit = false;
 
   this.update = function(player){
-    $http.put(`${mainRoute}/players/${player._id}`, {
-      'name':player.newName ? player.newName : player.name,
-      'alias':player.newAlias ? player.newAlias : player.alias,
-      'position':player.newPosition ? player.newPosition : player.position,
-      'country':player.newCountry ? player.newCountry : player.country,
-      'current_team':player.newTeam ? player.newTeam.replace(/\s+/g,'_') : player.current_team
-    })
+    player.name = player.newName ? player.newName : player.name,
+    player.alias = player.newAlias ? player.newAlias : player.alias,
+    player.position = player.newPosition ? player.newPosition : player.position,
+    player.country = player.newCountry ? player.newCountry : player.country,
+    player.current_team = player.newTeam ? player.newTeam.replace(/\s+/g,'_') : player.current_team
+
+    $http.put(`${mainRoute}/players/${player._id}`, player)
     .then((res) => {
-      this.getPlayers();
       this.cancel(player);
       console.log(res.data.message);
     }, (err) => {
@@ -83,12 +84,13 @@ app.controller('apiCtrl', ['$scope','$http', function($scope, $http) {
   this.deletePlayer = (player) => {
     $http.delete(`${mainRoute}/players/${player._id}`)
     .then((res) => {
-      this.getPlayers();
+      $scope.players = $scope.players.filter(ele => ele._id != player._id);
       console.log(res.data.message);
     }, (err) => console.log(err));
   }
 
   this.cancel = (player) => {
+    // do a for in and delete all properties that contain 'new'
     player.newName = undefined;
     player.newAlias = undefined;
     player.newPosition = undefined;

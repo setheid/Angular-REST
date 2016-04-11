@@ -36,7 +36,7 @@ module.exports = function(router, models) {
             if (err) return console.log(err);
             res.json({
               status: true,
-              data: player,
+              player: player,
               message: `${player.alias} posted to players`
             });
           });
