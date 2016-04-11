@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="./bundle.js"></script>
+    <title>Two Resource API</title>
+  </head>
+  <body data-ng-app="apiApp">
+    <main data-ng-controller="apiCtrl as api">
+      <section>
+        <h1>Teams</h1>
+        <article data-ng-repeat="team in teams">
+          <h2 class="team">{{team.name.replace('_',' ')}}</h2><button data-ng-click="api.deleteTeam(team)">Delete</button>
+          <div data-ng-repeat="player in players" data-ng-show="player.current_team == team.name">
+            <h3 class="player">Position {{player.position}}: {{player.alias}}</h3><button data-ng-show="!player.makeEdit" data-ng-click="edit(player)">Edit</button>
+            <ul class="player-form" data-ng-show="player.makeEdit">
+              <li>Name: <span>{{player.name}}</span><input data-ng-model="player.newName"></li>
+              <li>Alias: <span>{{player.alias}}</span><input data-ng-model="player.newAlias"></li>
+              <li>Position: <span>{{player.position}}</span><input data-ng-model="player.newPosition"></li>
+              <li>Country: <span>{{player.country}}</span><input data-ng-model="player.newCountry"></li>
+              <li>Current Team: <span>{{player.current_team.replace('_',' ')}}</span><input data-ng-model="player.newTeam"></li>
+              <li>
+                <button data-ng-click="api.update(player)">Update</button>
+                <button data-ng-click="api.deletePlayer(player)">Delete</button>
+                <button data-ng-click="api.cancel(player)">Cancel</button>
+              </li>
+            </ul>
+          </div>
+        </article>
+        <article>
+          <h2 class="team">Free Agents</h2>
+          <div data-ng-repeat="player in players" data-ng-show="player.current_team == null">
+            <h3 class="player">Position {{player.position}}: {{player.alias}}</h3><button data-ng-show="!player.makeEdit" data-ng-click="edit(player)">Edit</button>
+            <ul class="player-form" data-ng-show="player.makeEdit">
+              <li>Name: <span>{{player.name}}</span><input data-ng-model="player.newName"></li>
+              <li>Alias: <span>{{player.alias}}</span><input data-ng-model="player.newAlias"></li>
+              <li>Position: <span>{{player.position}}</span><input data-ng-model="player.newPosition"></li>
+              <li>Country: <span>{{player.country}}</span><input data-ng-model="player.newCountry"></li>
+              <li>Current Team: <span>{{player.current_team.replace('_',' ')}}</span><input data-ng-model="player.newTeam"></li>
+              <li>
+                <button data-ng-click="api.update(player)">Update</button>
+                <button data-ng-click="api.deletePlayer(player)">Delete</button>
+                <button data-ng-click="api.cancel(player)">Cancel</button>
+              </li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <section>
+        <h1>Add Player</h1>
+        <ul id="add-player">
+          <li>Name:<input data-ng-model="newPlayer.name"></li>
+          <li>Alias:<input data-ng-model="newPlayer.alias"></li>
+          <li>Position:<input data-ng-model="newPlayer.position"></li>
+          <li>Country:<input data-ng-model="newPlayer.country"></li>
+          <li>Current Team:<input data-ng-model="newPlayer.current_team"></li>
+          <li>
+            <button data-ng-click="api.addPlayer()">Add Player</button>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h1>Add Team</h1>
+        <ul id="add-team">
+          <li>Name: <input data-ng-model="newTeam.name"></li>
+          <li>Region: <span>NA, EU, SEA, CHINA</span><input data-ng-model="newTeam.region"></li>
+          <li>
+            <button data-ng-click="api.addTeam()">Add Team</button>
+          </li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
