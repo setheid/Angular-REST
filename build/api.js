@@ -37,6 +37,7 @@ function apiCtlr($http) {
     if (postPlayer.current_team) postPlayer.current_team = postPlayer.current_team.replace(/\s+/g,'_');
     $http.post(`${mainRoute}/players`, postPlayer)
     .then((res) => {
+      res.data.player.makeEdit = false;
       _this.players.push(res.data.player);
       resetAddPlayer();
       console.log(res.data.message);

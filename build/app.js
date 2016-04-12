@@ -8,9 +8,9 @@ app.controller('appCtlr', appCtrl);
 
 function appCtrl() {
 
-  this.edit = (player) => player.makeEdit === false ? player.makeEdit = true : player.makeEdit = false;
+  this.edit = player => player.makeEdit = !player.makeEdit;
 
-  this.cancel = (player) => {
+  this.cancel = player => {
     // do a for in and delete all properties that contain 'new'
     player.newName = undefined;
     player.newAlias = undefined;
