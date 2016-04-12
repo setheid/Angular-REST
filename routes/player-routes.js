@@ -37,7 +37,7 @@ module.exports = function(router, models) {
             res.json({
               status: true,
               player: player,
-              message: `${player.alias} posted to players`
+              message: `${player.alias} added`
             });
           });
         });

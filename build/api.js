@@ -28,14 +28,14 @@ function apiCtlr($http) {
   }
 
   _this.addPlayer = function() {
-    var postPlayer = {};
+    var playerToPost = {};
     for (var key in _this.newPlayer) {
       if (_this.newPlayer[key]) {
-        postPlayer[key] = _this.newPlayer[key];
+        playerToPost[key] = _this.newPlayer[key];
       }
     }
-    if (postPlayer.current_team) postPlayer.current_team = postPlayer.current_team.replace(/\s+/g,'_');
-    $http.post(`${mainRoute}/players`, postPlayer)
+    if (playerToPost.current_team) playerToPost.current_team = playerToPost.current_team.replace(/\s+/g,'_');
+    $http.post(`${mainRoute}/players`, playerToPost)
     .then((res) => {
       res.data.player.makeEdit = false;
       _this.players.push(res.data.player);
@@ -78,7 +78,6 @@ function apiCtlr($http) {
 
     $http.put(`${mainRoute}/players/${player._id}`, player)
     .then((res) => {
-      // _this.cancel(player);
       console.log(res.data.message);
     }, (err) => {
       console.log(err);
