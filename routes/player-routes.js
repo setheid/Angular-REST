@@ -83,7 +83,7 @@ module.exports = function(router, models) {
                 return teamJoin;
               });
             } else {
-              return teamJoin
+              return teamJoin;
             }
           })
           .then(teamJoin => {

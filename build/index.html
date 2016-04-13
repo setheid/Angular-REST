@@ -10,10 +10,10 @@
     <main data-ng-controller="apiCtlr as api">
       <section>
         <h1>Teams</h1>
-        <article data-ng-repeat="team in api.teams">
-          <h2 class="team">{{team.name.replace('_',' ')}}</h2><button data-ng-click="api.deleteTeam(team)">Delete</button>
-          <div data-ng-repeat="player in api.players" data-ng-show="player.current_team == team.name">
-            <h3 class="player">Position {{player.position}}: {{player.alias}}</h3><button data-ng-show="!player.makeEdit" data-ng-click="app.edit(player)">Edit</button>
+        <article class="team" id="{{team.name}}" data-ng-repeat="team in api.teams">
+          <h2 class="team-title" data-ng-init="team.title = team.name.replace('_',' ')">{{team.title}}</h2><button class="delete-team" data-ng-click="api.deleteTeam(team)">Delete</button>
+          <div id="{{player.alias}}" data-ng-repeat="player in api.players" data-ng-if="player.current_team == team.name">
+            <h3 class="player">Position {{player.position}}: {{player.alias}}</h3><button class="edit-player" data-ng-show="!player.makeEdit" data-ng-click="app.edit(player)">Edit</button>
             <ul class="player-form" data-ng-show="player.makeEdit">
               <li>Name: <span>{{player.name}}</span><input data-ng-model="player.newName"></li>
               <li>Alias: <span>{{player.alias}}</span><input data-ng-model="player.newAlias"></li>
@@ -21,17 +21,17 @@
               <li>Country: <span>{{player.country}}</span><input data-ng-model="player.newCountry"></li>
               <li>Current Team: <span>{{player.current_team.replace('_',' ')}}</span><input data-ng-model="player.newTeam"></li>
               <li>
-                <button data-ng-click="api.update(player)">Update</button>
-                <button data-ng-click="api.deletePlayer(player)">Delete</button>
-                <button data-ng-click="app.cancel(player)">Cancel</button>
+                <button class="update-player" data-ng-click="api.update(player); app.cancel(player)">Update</button>
+                <button class="delete-player" data-ng-click="api.deletePlayer(player)">Delete</button>
+                <button class="cancel" data-ng-click="app.cancel(player)">Cancel</button>
               </li>
             </ul>
           </div>
         </article>
         <article>
-          <h2 class="team">Free Agents</h2>
-          <div data-ng-repeat="player in api.players" data-ng-show="player.current_team == null">
-            <h3 class="player">Position {{player.position}}: {{player.alias}}</h3><button data-ng-show="!player.makeEdit" data-ng-click="app.edit(player)">Edit</button>
+          <h2 class="team-title">Free Agents</h2>
+          <div id="{{player.alias}}" data-ng-repeat="player in api.players" data-ng-if="player.current_team == null">
+            <h3 class="player">Position {{player.position}}: {{player.alias}}</h3><button class="edit-player" data-ng-show="!player.makeEdit" data-ng-click="app.edit(player)">Edit</button>
             <ul class="player-form" data-ng-show="player.makeEdit">
               <li>Name: <span>{{player.name}}</span><input data-ng-model="player.newName"></li>
               <li>Alias: <span>{{player.alias}}</span><input data-ng-model="player.newAlias"></li>
@@ -39,9 +39,9 @@
               <li>Country: <span>{{player.country}}</span><input data-ng-model="player.newCountry"></li>
               <li>Current Team: <span>{{player.current_team.replace('_',' ')}}</span><input data-ng-model="player.newTeam"></li>
               <li>
-                <button data-ng-click="api.update(player); app.cancel(player)">Update</button>
-                <button data-ng-click="api.deletePlayer(player)">Delete</button>
-                <button data-ng-click="app.cancel(player)">Cancel</button>
+                <button class="update-player" data-ng-click="api.update(player); app.cancel(player)">Update</button>
+                <button class="delete-player" data-ng-click="api.deletePlayer(player)">Delete</button>
+                <button class="cancel" data-ng-click="app.cancel(player)">Cancel</button>
               </li>
             </ul>
           </div>

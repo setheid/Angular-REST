@@ -11,12 +11,11 @@ function appCtrl() {
   this.edit = player => player.makeEdit = !player.makeEdit;
 
   this.cancel = player => {
-    // do a for in and delete all properties that contain 'new'
-    player.newName = undefined;
-    player.newAlias = undefined;
-    player.newPosition = undefined;
-    player.newCountry = undefined;
-    player.newTeam = undefined;
+    for (var key in player) {
+      if (key.slice(0, 3) === 'new') {
+        delete player[key];
+      }
+    }
     player.makeEdit = false;
   }
 };

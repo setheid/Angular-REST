@@ -11,17 +11,17 @@ function apiCtlr($http) {
 
   _this.getTeams = function() {
     $http.get(`${mainRoute}/teams`)
-      .then((res) => {
+      .then(res => {
         _this.teams = res.data.teams;
         _this.getPlayers();
-      }, (err) => console.log(err));
+      }, err => console.log(err));
   }
 
   _this.getPlayers = function() {
     $http.get(`${mainRoute}/players`)
       .then((res) => {
         _this.players = res.data.players;
-        _this.players.sort((a, b) => a.position - b.position).forEach((player) => {
+        _this.players.sort((a, b) => a.position - b.position).forEach(player => {
           player.makeEdit = false;
         });
       }, (err) => console.log(err));
@@ -65,16 +65,16 @@ function apiCtlr($http) {
   }
 
   function resetAddTeam() {
-    _this.newTeam.name = undefined;
-    _this.newTeam.region = undefined;
+    if (_this.newTeam.name) delete _this.newTeam.name;
+    if (_this.newTeam.region) delete _this.newTeam.region;
   }
 
   _this.update = function(player){
-    player.name = player.newName ? player.newName : player.name,
-    player.alias = player.newAlias ? player.newAlias : player.alias,
-    player.position = player.newPosition ? player.newPosition : player.position,
-    player.country = player.newCountry ? player.newCountry : player.country,
-    player.current_team = player.newTeam ? player.newTeam.replace(/\s+/g,'_') : player.current_team
+    player.name = player.newName ? player.newName : player.name;
+    player.alias = player.newAlias ? player.newAlias : player.alias;
+    player.position = player.newPosition ? player.newPosition : player.position;
+    player.country = player.newCountry ? player.newCountry : player.country;
+    player.current_team = player.newTeam ? player.newTeam.replace(/\s+/g,'_') : player.current_team;
 
     $http.put(`${mainRoute}/players/${player._id}`, player)
     .then((res) => {
