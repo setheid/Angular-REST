@@ -37,7 +37,7 @@ module.exports = function(router, models) {
             res.json({
               status: true,
               player: player,
-              message: `${player.alias} posted to players`
+              message: `${player.alias} added`
             });
           });
         });
@@ -83,7 +83,7 @@ module.exports = function(router, models) {
                 return teamJoin;
               });
             } else {
-              return teamJoin
+              return teamJoin;
             }
           })
           .then(teamJoin => {
