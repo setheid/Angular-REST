@@ -33,7 +33,7 @@ module.exports = function(router, models) {
           if (err) return console.log(err);
           res.json({
             status: true,
-            data: team,
+            team: team,
             message: `${req.body.name} added.`
           });
         });
