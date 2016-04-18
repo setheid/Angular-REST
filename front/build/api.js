@@ -48,7 +48,7 @@ function apiCtrl($http) {
     team.name = team.name.replace(/\s+/g,'_');
     $http.post(`${mainRoute}/teams`, team)
     .then((res) => {
-      _this.teams.push(res.data.data);
+      _this.teams.push(res.data.team);
       resetAddTeam();
       console.log(res.data.message);
     }, (err) => console.log(err));
