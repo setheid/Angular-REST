@@ -4,20 +4,23 @@
 
 let app = angular.module('app', ['api']);
 
-app.controller('appCtlr', appCtrl);
+app.controller('appCtrl', appCtrl);
 
 function appCtrl() {
 
   this.edit = player => player.makeEdit = !player.makeEdit;
 
   this.cancel = player => {
-    for (var key in player) {
-      if (key.slice(0, 3) === 'new') {
-        delete player[key];
-      }
-    }
+    player.edited = {};
     player.makeEdit = false;
   }
 };
+
+app.directive('playerView', function() {
+  return {
+    restrict: 'A',
+    templateUrl: 'player-view.html'
+  }
+});
 
 })();

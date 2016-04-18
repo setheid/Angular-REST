@@ -3,9 +3,9 @@
 (function() {
 
 let app = angular.module('api', []);
-app.controller('apiCtlr', ['$http', apiCtlr]);
+app.controller('apiCtrl', ['$http', apiCtrl]);
 
-function apiCtlr($http) {
+function apiCtrl($http) {
   let _this = this;
   let mainRoute = 'http://localhost:3000';
 
@@ -27,58 +27,49 @@ function apiCtlr($http) {
       }, (err) => console.log(err));
   }
 
-  _this.addPlayer = function() {
-    var playerToPost = {};
-    for (var key in _this.newPlayer) {
-      if (_this.newPlayer[key]) {
-        playerToPost[key] = _this.newPlayer[key];
-      }
-    }
-    if (playerToPost.current_team) playerToPost.current_team = playerToPost.current_team.replace(/\s+/g,'_');
-    $http.post(`${mainRoute}/players`, playerToPost)
+  _this.addPlayer = function(player) {
+    if (player.current_team) player.current_team = player.current_team.replace(/\s+/g,'_');
+    $http.post(`${mainRoute}/players`, player)
     .then((res) => {
-      res.data.player.makeEdit = false;
-      _this.players.push(res.data.player);
+      let newPlayer = res.data.player;
+      newPlayer.makeEdit = false;
+      _this.players.push(newPlayer);
       resetAddPlayer();
       console.log(res.data.message);
     }, (err) => console.log(err));
   }
 
   function resetAddPlayer() {
-    _this.newPlayer.name = undefined;
-    _this.newPlayer.alias = undefined;
-    _this.newPlayer.position = undefined;
-    _this.newPlayer.country = undefined;
-    _this.newPlayer.current_team = undefined;
+    _this.newPlayer = {};
   }
 
-  _this.addTeam = function() {
-    $http.post(`${mainRoute}/teams`, {
-      'name':_this.newTeam.name.replace(/\s+/g,'_'),
-      'region':_this.newTeam.region
-    })
+  _this.addTeam = function(team) {
+    if (!team.name) return;
+    team.name = team.name.replace(/\s+/g,'_');
+    $http.post(`${mainRoute}/teams`, team)
     .then((res) => {
+      _this.teams.push(res.data.data);
       resetAddTeam();
-      _this.getTeams();
       console.log(res.data.message);
     }, (err) => console.log(err));
   }
 
   function resetAddTeam() {
-    if (_this.newTeam.name) delete _this.newTeam.name;
-    if (_this.newTeam.region) delete _this.newTeam.region;
+    _this.newTeam = {};
   }
 
   _this.update = function(player){
-    player.name = player.newName ? player.newName : player.name;
-    player.alias = player.newAlias ? player.newAlias : player.alias;
-    player.position = player.newPosition ? player.newPosition : player.position;
-    player.country = player.newCountry ? player.newCountry : player.country;
-    player.current_team = player.newTeam ? player.newTeam.replace(/\s+/g,'_') : player.current_team;
+    player.name = player.edited.name ? player.edited.name : player.name;
+    player.alias = player.edited.alias ? player.edited.alias : player.alias;
+    player.position = player.edited.position ? player.edited.position : player.position;
+    player.country = player.edited.country ? player.edited.country : player.country;
+    player.current_team = player.edited.current_team ? player.edited.current_team.replace(/\s+/g,'_') : player.current_team;
 
     $http.put(`${mainRoute}/players/${player._id}`, player)
     .then((res) => {
       console.log(res.data.message);
+      player.makeEdit = false;
+      player.edited = {};
     }, (err) => {
       console.log(err);
     });
@@ -88,7 +79,7 @@ function apiCtlr($http) {
     $http.delete(`${mainRoute}/teams/${team._id}`)
     .then((res) => {
       console.log(res.data.message);
-      _this.getTeams();
+      _this.teams = _this.teams.filter(ele => ele._id !== team._id);
     }, (err) => console.log(err));
   }
 
@@ -99,8 +90,6 @@ function apiCtlr($http) {
       console.log(res.data.message);
     }, (err) => console.log(err));
   }
-
-  _this.getTeams();
 }
 
 })();
