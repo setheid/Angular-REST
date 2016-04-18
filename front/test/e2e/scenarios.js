@@ -41,13 +41,13 @@ describe('our first angular test homepage', function() {
 
   it('should edit Test Player and change alias and position', function() {
     element(by.css('#test_player button.edit-player')).click();
-    element(by.id('test_player')).element(by.model('player.newAlias')).sendKeys('updated_player');
-    element(by.id('test_player')).element(by.model('player.newPosition')).sendKeys(5);
+    element(by.id('test_player')).element(by.model('player.edited.newAlias')).sendKeys('updated_player');
+    element(by.id('test_player')).element(by.model('player.edited.newPosition')).sendKeys(5);
     element(by.id('test_player')).element(by.css('button.update-player')).click();
     let updatedPlayer = element(by.css('#updated_player .player'));
     expect(updatedPlayer.getText()).toEqual('Position 5: updated_player');
   });
-  
+
   it('should edit Test Player and delete it', function() {
     element(by.css('#updated_player button.edit-player')).click();
     element(by.css('#updated_player button.delete-player')).click();
