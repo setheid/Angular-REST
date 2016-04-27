@@ -62,21 +62,21 @@ module.exports = function(router, models) {
     })
     .catch(err => res.send(err));
   })
-  .put(authenticate, (req, res) => {
-    let userStatus = req.decodedToken;
-    if (userStatus.admin || userStatus.manager && userStatus.team === req.params.team) {
+  .put((req, res) => { // removed 'authenticate' middleware
+    // let userStatus = req.decodedToken;
+    // if (userStatus.admin || userStatus.manager && userStatus.team === req.params.team) {
       Team.update({team: req.params.team}, {$set: req.body}, (err, team) => {
         if (err) return res.send(err);
         res.json({data: team});
       });
 
-    } else {
-
-      res.json({
-        status: 'failure',
-        msg: 'You do not have the authorization to perform this action.'
-      });
-    }
+    // } else {
+    //
+    //   res.json({
+    //     status: 'failure',
+    //     msg: 'You do not have the authorization to perform this action.'
+    //   });
+    // }
   })
   .delete((req, res) => { // removed authenticate middleware
     let userStatus = req.decodedToken;
