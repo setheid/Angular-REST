@@ -34,7 +34,7 @@ ul {
   margin-bottom: 10px;
 }
 
-#add-player {
+#add-player ul {
   width: 235px;
   padding: 0;
 }
@@ -48,7 +48,7 @@ ul {
   margin: 5px 0;
 }
 
-#add-team {
+#add-team ul {
   width: 250px;
   margin: 0 0 30px;
   padding: 0;
