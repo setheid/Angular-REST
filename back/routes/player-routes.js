@@ -16,10 +16,10 @@ module.exports = function(router, models) {
       res.end();
     });
   })
-  .post((req, res) => { // removed authenticate middleware
+  .post(authenticate, (req, res) => {
     let userStatus = req.decodedToken;
 
-    // if (userStatus.admin || userStatus.manager && userStatus.team === req.body.current_team) {
+    if (userStatus.admin || userStatus.manager && userStatus.team === req.body.current_team) {
       Player.findOne({alias: req.body.alias})
       .then(player => {
         if (player) {
@@ -44,14 +44,13 @@ module.exports = function(router, models) {
       })
       .catch(err => res.send(err));
 
-    // } else {
-    //
-    //   res.json({
-    //     status: 'failure',
-    //     msg: 'You do not have the authorization to perform this action.'
-    //   });
-    //   res.end();
-    // }
+    } else {
+
+      res.status(400).json({
+        message: 'You do not have the authorization to perform this action.'
+      });
+      res.end();
+    }
   });
 
   router.route('/players/:id')
@@ -65,12 +64,12 @@ module.exports = function(router, models) {
       res.end();
     });
   })
-  .put((req, res) => { // removed authenticate middleware
+  .put(authenticate, (req, res) => {
     let userStatus = req.decodedToken;
 
     Player.findOne({_id: req.params.id})
     .then(player => {
-      // if (userStatus.admin || userStatus.manager && userStatus.team === player.current_team) {
+      if (userStatus.admin || userStatus.manager && userStatus.team === player.current_team) {
         // check to see if the request is to change teams
         if (req.body.current_team && req.body.current_team !== player.current_team) {
           var teamLeave;
@@ -112,19 +111,20 @@ module.exports = function(router, models) {
           if (err) return res.send(err);
           res.json({data: data, message: `${player.alias} updated`});
         });
-      // } else {
-      //
-      //   res.json({
-      //     status: 'failure',
-      //     msg: 'You do not have the authorization to perform this action.'
-      //   });
-      // }
+      } else {
+
+        res.json({
+          status: 'failure',
+          message: 'You do not have the authorization to perform this action.'
+        });
+      }
     })
     .catch(err => res.send(err));
   })
-  .delete((req, res) => { // removed authenticate middleware
+  .delete(authenticate, (req, res) => {
     let userStatus = req.decodedToken;
-    // if (userStatus.admin) {
+
+    if (userStatus.admin) {
       Player.findOne({_id: req.params.id}, (err, player) => {
         player.remove((err, player) => {
           res.json({message: `${player.name} removed`});
@@ -132,13 +132,13 @@ module.exports = function(router, models) {
         });
       });
 
-    // } else {
-    //
-    //   res.json({
-    //     status: 'failure',
-    //     message: 'You do not have the authorization to perform this action.'
-    //   });
-    //   res.end();
-    // }
+    } else {
+
+      res.json({
+        status: 'failure',
+        message: 'You do not have the authorization to perform this action.'
+      });
+      res.end();
+    }
   });
 }

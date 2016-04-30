@@ -1,11 +1,13 @@
 'use strict';
 
 let base64Decoder = require('../lib/base64Decoder');
+let jwt = require('jsonwebtoken');
+let config = require('./../config');
 
 module.exports = function(router, models) {
   let User = models.User;
 
-  router.post('/signup', (req, res) => {
+  router.get('/signup', (req, res) => {
     User.findOne({username: req.body.username}, (err, user) => {
       if (err) return console.log(err);
 
@@ -34,15 +36,24 @@ module.exports = function(router, models) {
     });
   });
 
-  router.post('/login', (req, res) => {
+  router.get('/login', (req, res) => {
     let userLogin = base64Decoder(req.headers);
     let userName = userLogin[0];
     let password = userLogin[1];
     User.findOne({username: userName}, (err, user) => {
       if (err) return res.send(err);
+
       let valid = user.compareHash(password);
-      if (!valid) return res.json({status:'failure'});
-      res.json({token: user.generateToken()});
+      if (!valid) return res.status(400).json({message:'authentication error'});
+
+      let token = user.generateToken();
+      let decodedUser = jwt.verify(token, config.secret);
+      res.json({user: decodedUser, token: token});
     });
+  });
+
+  router.get('/validate', (req, res) => {
+    let decodedUser = jwt.verify(req.headers.token, config.secret);
+    res.json({ user: decodedUser });
   });
 }

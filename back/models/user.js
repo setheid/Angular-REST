@@ -24,7 +24,7 @@ module.exports = function(mongoose, models) {
   }
 
   userSchema.methods.generateToken = function() {
-    return jwt.sign({_id: this._id, admin: this.admin, manager: this.manager, team: this.team}, config.secret);
+    return jwt.sign({_id: this._id, name: this.name, admin: this.admin, manager: this.manager, team: this.team}, config.secret);
   }
 
   let User = mongoose.model('User', userSchema);

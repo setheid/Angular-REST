@@ -3,43 +3,18 @@
 (function() {
 
 let app = angular.module('api', []);
+require('./services/api_service')(app);
+require('./services/auth_service')(app);
+require('./services/error_service')(app);
 
-app.factory('dbRequests', ['$http', function($http) {
-  let mainRoute = 'http://localhost:3000';
+app.controller('playersCtrl',
+['dbRequests', 'AuthService', 'ErrorService',
+function(dbRequests, AuthService, ErrorService) {
 
-  function Resource(resourceName) {
-    this.resourceName = resourceName;
-  }
-
-  Resource.prototype.addOne = function(data) {
-    return $http.post(`${mainRoute}/${this.resourceName}`, data);
-  }
-
-  Resource.prototype.getOne = function(data) {
-    return $http.get(`${mainRoute}/${this.resourceName}/${data._id}`);
-  }
-
-  Resource.prototype.getAll = function() {
-    return $http.get(`${mainRoute}/${this.resourceName}`);
-  };
-
-  Resource.prototype.update = function(data){
-    return $http.put(`${mainRoute}/${this.resourceName}/${data._id}`, data)
-  }
-
-  Resource.prototype.delete = function(data) {
-    return $http.delete(`${mainRoute}/${this.resourceName}/${data._id}`);
-  }
-
-  return function(resourceName) {
-    return new Resource(resourceName);
-  }
-}]);
-
-app.controller('playersCtrl', ['dbRequests', function(dbRequests) {
   let _this = this;
   let db = dbRequests('players');
 
+  _this.error = ErrorService(null);
   _this.players = [];
 
   _this.getPlayers = () => {
@@ -56,14 +31,19 @@ app.controller('playersCtrl', ['dbRequests', function(dbRequests) {
 
   _this.addPlayer = player => {
     if (player.current_team) player.current_team = player.current_team.replace(/\s+/g,'_');
-    db.addOne(player)
+    db.addOne(player, {
+      headers: { token: AuthService.getToken() }
+    })
     .then(res => {
       let newPlayer = res.data.player;
       newPlayer.makeEdit = false;
       _this.players.push(newPlayer);
       resetAddPlayer();
       console.log(res.data.message);
-    }, err => console.log(err));
+    }, err => {
+      resetAddPlayer();
+      _this.error = ErrorService('You do not have the authorization to add a player');
+    });
   }
 
   _this.update = player => {
@@ -72,8 +52,10 @@ app.controller('playersCtrl', ['dbRequests', function(dbRequests) {
     player.position = player.edited.newPosition ? player.edited.newPosition : player.position;
     player.country = player.edited.newCountry ? player.edited.newCountry : player.country;
     player.current_team = player.edited.newTeam ? player.edited.newTeam.replace(/\s+/g,'_') : player.current_team;
-    // delete player.edit;
-    db.update(player)
+    delete player.edit;
+    db.update(player, {
+      headers: { token: AuthService.getToken() }
+    })
     .then(res => {
       console.log(res.data);
       player.makeEdit = false;
@@ -84,7 +66,9 @@ app.controller('playersCtrl', ['dbRequests', function(dbRequests) {
   }
 
   _this.deletePlayer = player => {
-    db.delete(player)
+    db.delete(player, {
+      headers: { token: AuthService.getToken() }
+    })
     .then(res => {
       _this.players = _this.players.filter(ele => ele._id != player._id);
       console.log(res.data.message);

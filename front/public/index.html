@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html data-ng-app="app" data-ng-controller="appCtrl as app">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./main.css">
+
+    <title>Two Resource API</title>
+  </head>
+  <body data-ng-controller="teamsCtrl as teams">
+    <main data-ng-init="teams.getTeams(); players.getPlayers()" data-ng-controller="playersCtrl as players">
+
+      <div data-ng-if="!app.loggedIn" id="login">
+        <h1>Login</h1>
+        <form>
+          <input type="text" data-ng-model="user.username">
+          <input type="password" data-ng-model="user.password">
+          <button type="button" data-ng-click="app.login(user)">Submit</button>
+        </form>
+      </div>
+
+      <div data-ng-if="app.loggedIn">
+        <input type="button" data-ng-click="app.logout()" value="Logout">
+        <h3>You are logged in as {{app.user.name}}</h3> <!-- this doesn't work on refresh -->
+        <teams-list></teams-list>
+
+        <add-player></add-player>
+
+        <add-team></add-team>
+      </div>
+
+
+    </main>
+
+  <!--- Scripts --->
+  <script src="./bundle.js"></script>
+  </body>
+</html>
