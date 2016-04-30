@@ -8,8 +8,8 @@ require('./services/auth_service')(app);
 require('./services/error_service')(app);
 
 app.controller('playersCtrl',
-['dbRequests', 'AuthService', 'ErrorService',
-function(dbRequests, AuthService, ErrorService) {
+['dbRequests', 'AuthService', 'ErrorService', '$location',
+function(dbRequests, AuthService, ErrorService, $location) {
 
   let _this = this;
   let db = dbRequests('players');
