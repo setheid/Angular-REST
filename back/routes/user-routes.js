@@ -16,7 +16,6 @@ module.exports = function(router, models) {
           status: 'failure',
           message: 'username already exists'
         });
-        return res.end();
 
       } else if (!req.body.username || !req.body.password) {
 

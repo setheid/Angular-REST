@@ -99,7 +99,6 @@ describe('Routes work as expected', () => {
     .set('Authorization', `token ${managerToken}`)
     .send({name: 'newPlayer', alias: 'newAlias', current_team: 'testTeam'})
     .end((err, res) => {
-      // console.log(res);
       // expect(true).eql(false);
       expect(res).to.have.status(200);
       expect(res.body.message).to.have.eql('newAlias posted to players');
